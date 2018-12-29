@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <meta charset="utf-8">
+    <title>Maternal Mortality</title>
+    <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+    <script src="graph-scroll.js"></script>
+    <script src="line_chart.js"></script>
+    <script src="us_bar_chart.js"></script>
+    <script src="create_why_chart.js"></script>
+    <script src="create_map.js"></script>
+    <script src="fatality_and_education.js"></script>
+
+    <style type="text/css">
+
+    .hidden{
+        display:none;
+    }
+
+    body, html {
+        height: 100%;
+    }
+
+    #container {
+      margin-left: 10% !important;
+      margin-right: 10% !important
+    }
+
+    .hero-image {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://static01.nyt.com/images/2018/04/04/magazine/15mag-maternity-image9/15mag-maternity-image9-facebookJumbo-v2.jpg");
+
+      height: 38%;
+
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: relative;
+    }
+
+    .hero-text {
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white !important;
+    }
+
+    body{
+        background-color: #F1F3F3;
+        margin: 0px auto;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    @font-face {
+      font-family: apercu;
+      src: url("apercu-light.ttf");
+    }
+
+    h1,
+    h2 {
+      font-family: apercu !important;
+      color: white
+    }
+
+    text,
+    p,
+    h3,
+    h4{
+      font-family: apercu !important;
+      color: #514945
+    }
+
+    .domain,
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: "black";
+      stroke-width: 1px;
+      shape-rendering: crispEdges;
+    }
+
+    .x path {
+      display: none;
+    }
+
+    h1{
+        margin: 15px;
+        text-align: center;
+    }
+    h2{
+        text-align: center;
+    }
+
+
+    #container{
+        position: relative;
+    }
+
+    #sections{
+        width: 450px;
+        padding-bottom:300px;
+    }
+
+    #sections > section{
+        opacity: .2;
+        margin-bottom: 200px;
+    }
+
+    #sections > section.graph-scroll-active{
+        opacity: 1;
+    }
+
+    #graph{
+        margin-left: 40px;
+        width: 500px;
+        position: sticky;
+        top: 20px;
+        float: right;
+
+    }
+
+    #footer{
+        height:1000px;
+    }
+
+    .tooltip{
+         position:absolute;
+         width:150px;
+         height:auto;
+         padding:10px;
+         background-color: white;
+         border-radius:10px;
+         box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+         pointer-events: none;
+     }
+
+
+     .tooltip p{
+         margin:0;
+         font-family: sans-serif;
+         font-size:12px;
+     }
+
+     .tooltip.hidden{
+         display:none;
+     }
+    </style>
+</head>
+<body>
+  <div class="hero-image">
+    <div class="hero-text">
+      <h1>Maternal & Infant Mortality in the United States</h1>
+      <h2>Corinne Bintz & Holley McShan</p>
+    </div>
+  </div>
+    <div id="container">
+            <div id="graph">
+    </div>
+    <div id="sections">
+        <section>
+            <h3>Maternal Mortality Worldwide</h3>
+            <p>
+              The United States' maternal mortality rate is not only higher than all other developed countries, but also increasing.
+              Between 1990 and 2015, the United States' maternal mortality rate increased by 56% from 16.9 to 26.4 deaths per 100,000
+              live births.
+            </p>
+            <p>
+              To the right, explore the change in maternal mortality rate for every 1,000 live births in developed countries over time. Hover over
+              lines for more details.
+            </p>
+        </section>
+        <section>
+            <h3>U.S. Maternal Mortality per Race</h3>
+            <p>
+              If we break down maternal mortality by race, glaring disparities become clear. Notably, non-Hispanic black women are more than twice as
+              likely to die from pregnancy than Hispanic and non-Hispanic white women.
+            </p>
+            <p>
+              Mouse over the bar chart on the right for the stats.
+            </p>
+        </section>
+        <section>
+            <h3>Infant Mortality Map</h3>
+            <p>
+              Infant mortality is closely related to maternal mortality. The infant mortality per race varies geographically, especially for
+              infants of color. For example, the infant mortality rate for Non-Hispanic Black infants in Wisconsin in 2016 was 14.6 deaths
+              per 100,000 live births, whereas the rate was 6.69 in Washington State. Geographic location is an integral part of how women,
+              especially women, experience pregnancy and what risk they and their infants face of maternal mortality. Use the drop down menu
+              to select a race and see the map change to show how the infant mortality rate for that race varies across states.
+            </p>
+            <select id = "mapMenu">
+              <optgroup label="Infant Mortality per race" id="raceMMR"></optgroup>
+            </select>
+            <p>
+              On the right, examine variance in infant mortality rates across the United States for specific races. Choose which race to look
+              at in the drop-down menu above.
+            </p>
+        </section>
+        <section>
+            <h3>Potential Explanations for the State of Infant and Maternal Mortality in the U.S. </h3>
+            <br/>
+            <h4>Stress of a black woman's lived experience - <i>Prevalence of high allostatic load scores</i></h4>
+            <p>
+              For black women in America, an inescapable atmosphere of
+              societal and systemic racism can create a kind of toxic physiological stress
+              One of they key arguments used to explain the black-white divide in infant and maternal mortality is that black women in the U.S.
+              endure a sort of harmful physiological stress in their lived experience with racism and/or sexism that leads to conditions that
+              might endanger mother and child. Experts have used allostatic load scores — an algorithmic measurement of stress-associated body
+              chemicals and their cumulative effect on the body’s systems — to demonstrate the health consequences of the cumulative impact of
+              repeated experience with social or economic adversity and discrimination for black people in the United States. Black women have
+              higher allostatic load scores than white women and black men. An study published in The American Journal of Public Health
+              concluded that “persistent racial differences in health "may be felt particularly by black women because of [the] double jeopardy
+              of gender and racial discrimination.”
+            </p>
+            <p>
+              Mouse over the bar chart on the right for the stats on high allostatic load scores.
+            </p>
+        </section>
+        <section>
+            <h4>Conditions developed under extreme physiological stress - <i>Preeclampsia/eclampsia prevalence </i></h4>
+            <p>
+              Certain conditions that develop during pregnancy have been indicated as potential
+              explanations for the state of African-American maternal and infant mortality.
+              Pre-eclampsia (a pregnancy complication characterized by high blood pressure and
+              signs of damage to another organ system, often the liver and kidneys) and eclampsia
+              (seizures that develop with pre-eclampsia) are 60% more likely for black mothers
+              and also generally more severe.
+            </p>
+            <p>
+              Mouse over the bar chart on the right for the stats on preeclampsia/eclampsia prevalence.
+            </p>
+        </section>
+        <section>
+            <h4>Racial bias in healthcare - <i>Reports of discriminatory and poor treatment</i></h4>
+            <p>
+              In addition to conditions resulting from built up physiological stress, racial bias in healthcare may play a role in the maternal
+              and infant mortality's black-white divide. Treatment by medical personnel during labor and pregnancy may also play a role in the
+              disproportionately high infant and maternal mortality rates for black Americans. A survey of women who had delivered babies in
+              U.S. hospitals showed that more than two times as many black women reported poor treatment from hospital staff due to race,
+              ethnicity, cultural background, or language than did white women.
+            </p>
+            <p>
+              Mouse over the bar chart on the right for the stats on reports of poor treatment by hosptial staff.
+            </p>
+        </section>
+        <section>
+            <h3>Persistence of a High Black Infant Mortality Rates Controlling for Maternal Educational Attainment</h3>
+            <p>
+              Many are eager to blame the education gap or the income gap between black and white Americans for the alarming
+              black-white divide in both infant and maternal mortality. However, it turns out that education, and by logical
+              inference income as well, offer little protection from the increased risk of maternal
+              and infant mortality for blacks. It's shown here that a black woman with an advanced professional degree is still
+              more likely to lose her baby than a white woman with an eighth grade education or less.
+            </p>
+            <p>
+              Mouse over the bar chart on the right to see the exact infant mortality rates by race and maternal educational attainment.
+            </p>
+        </section>
+        <section>
+            <h3>Sources</h3>
+            <a href="https://www.nytimes.com/2018/04/11/magazine/black-mothers-babies-death-maternal-mortality.html">New York Times: Why America’s Black Mothers and Babies Are in a Life-or-Death Crisis</a> <br/>
+            <br/><a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(16)31470-2/fulltext">Global, regional, and national levels of maternal mortality, 1990–2015</a> <br/>
+            <br/><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5400697/">Trends in Maternal Mortality by Socio-Demographic Characteristics</a> <br/>
+            <br/><a href="https://www.kff.org/other/state-indicator/infant-mortality-rate-by-race-ethnicity/?currentTimeframe=0&sortModel=%7B%22colId%22:%22Location%22,%22sort%22:%22asc%22%7D">Kaiser Family Foundation: Infant Mortality Rate by Race/Ethnicity</a> <br/>
+            <br/><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1470581/">“Weathering” and Age Patterns of Allostatic Load Scores Among Blacks and Whites in the United States</a> <br/>
+            <br/><a href="https://www.brookings.edu/blog/social-mobility-memos/2016/10/21/6-charts-showing-race-gaps-within-the-american-middle-class/">Brookings: Infant Mortality by Maternal Educational Attainment</a> <br/>
+            <br/><a href="http://transform.childbirthconnection.org/wp-content/uploads/2013/05/LTM-III-DB-race_ethnicity.pdf">Listening to Mothers Survey III: How Do Childbearing Experiences Differ Across Racial and Ethnic Groups in the United States?</a> <br/>
+            <br/><a href="https://www.hcup-us.ahrq.gov/reports/statbriefs/sb222-Preeclampsia-Eclampsia-Delivery-Trends.pdf">HCUP:Delivery Hospitalizations Involving Preeclampsia and Eclampsia, 2005–2014 </a> <br/>
+        </section>
+    </div>
+</div>
+
+<div id="footer"></div>
+<div class="tooltip"></div>
+<div id = "tooltip1" class = "tooltip">
+   Country: <span id="country"></span><br />
+   1990 Rate: <span id="mmr90"></span><br />
+   2000 Rate: <span id="mmr00"></span><br />
+   2015 Rate: <span id="mmr15"></span><br />
+   </p>
+</div>
+<div id = "tooltip2" class = "tooltip">
+   Race: <span id="race"></span><br />
+   MM Rate: <span id="mmr"></span><br />
+   </p>
+</div>
+<div id = "tooltip3" class = "tooltip">
+   State: <span id="state"></span><br />
+   IMR for Hispanic Infants: <span id="rate"></span><br />
+   </p>
+</div>
+<div id = "tooltip4" class = "tooltip">
+   State: <span id="state1"></span><br />
+   IMR for Non-Hispanic White Infants: <span id="rate1"></span><br />
+   </p>
+</div>
+<div id = "tooltip5" class = "tooltip">
+   State: <span id="state2"></span><br />
+   IMR for Non-Hispanic Black Infants: <span id="rate2"></span><br />
+   </p>
+</div>
+<div id = "tooltip6" class = "tooltip">
+   State: <span id="state3"></span><br />
+   IMR for Infants with Racial/Ethnic Identity "Other": <span id="rate3"></span><br />
+   </p>
+</div>
+<div id = "tooltip7" class = "tooltip">
+   <span id="race1"></span><br />
+   Rate: <span id="rate4"></span><br />
+   </p>
+</div>
+<div id = "tooltip8" class = "tooltip">
+   <span id="race2"></span><br />
+   Rate: <span id="rate5"></span><br />
+   </p>
+</div>
+
+<script>
+
+
+    // our data files
+    const worldData = "http://www.cs.middlebury.edu/~cbintz/infovis/final_project/lancet_data.csv"
+    const perRaceUSData = "http://www.cs.middlebury.edu/~cbintz/infovis/final_project/us_per_race_mmr.csv"
+    const perRaceStateData = "http://www.cs.middlebury.edu/~cbintz/infovis/final_project/infant_transpose.csv"
+    const mapData = "http://www.cs.middlebury.edu/~cbintz/infovis/final_project/us-states.json"
+    const mapMetricData = "http://www.cs.middlebury.edu/~cbintz/infovis/final_project/infant_mortality_per_race.csv"
+
+    // svg for all charts
+    const svg = d3.select("#graph").append("svg")
+        .attr("width", 500)
+        .attr("height", 500);
+
+    Promise.all([
+        d3.csv(worldData),
+        d3.csv(perRaceUSData),
+        d3.csv(perRaceStateData),
+        d3.json(mapData),
+        d3.csv(mapMetricData),
+        ]).then(function(data){
+
+
+        // create menu to change color scale based on race in map
+        let menu1 = d3.select("#raceMMR");
+        menu1.append("option").attr("value","Hispanic").text("Hispanic");
+        menu1.append("option").attr("value","Non-Hispanic White").text("Non-Hispanic White");
+        menu1.append("option").attr("value","Non-Hispanic Black").text("Non-Hispanic Black");
+        menu1.append("option").attr("value","Other").text("Other");
+
+        d3.select("#mapMenu").on("change", function () {
+            map.metric(this.value)
+            map();
+        });
+
+        // create all of our charts
+        const al_why_chart = create_why_chart(0);
+        const treatment_why_chart = create_why_chart(1);
+        const eclampsia_why_chart = create_why_chart(2);
+        const education_chart = create_edu_chart();
+        const world_chart = create_world_chart(svg, 450, 450, data[0]);
+        const bar_chart = create_bar_chart_us(svg, 450, 450, data[1]);
+        const map = create_map(svg, 450, 450, data[3], data[4])
+
+        // for each section, hide and change the opacity for all charts, setting opacity = 1 and hidden = null for the desired chart
+        // also, set the svg's opacity back to 1 since we set it to 0 in the sources section
+        var handleSection1 = function(){
+            svg.attr("opacity", 1);
+
+            world_chart.hidden(null)
+            world_chart.opacity(1);
+            world_chart();
+
+            bar_chart.opacity(0);
+            bar_chart.hidden("none")
+            bar_chart();
+
+            map.opacity(0);
+            map.hidden("none")
+            map();
+
+            al_why_chart.opacity(0);
+            al_why_chart.hidden("none")
+            al_why_chart();
+
+            treatment_why_chart.opacity(0);
+            treatment_why_chart.hidden("none");
+            treatment_why_chart();
+
+            eclampsia_why_chart.opacity(0);
+            eclampsia_why_chart.hidden("none");
+            eclampsia_why_chart();
+
+            education_chart.opacity(0);
+            education_chart.hidden("none")
+            education_chart();
+        }
+
+        var handleSection2 = function(){
+            svg.attr("opacity", 1);
+
+            bar_chart.hidden(null)
+            bar_chart.opacity(1);
+            bar_chart();
+
+            map.opacity(0);
+            map.hidden("none")
+            map();
+
+            world_chart.opacity(0);
+            world_chart.hidden("none")
+            world_chart();
+
+            al_why_chart.opacity(0);
+            al_why_chart.hidden("none")
+            al_why_chart();
+
+            treatment_why_chart.opacity(0);
+            treatment_why_chart.hidden("none");
+            treatment_why_chart();
+
+            eclampsia_why_chart.opacity(0);
+            eclampsia_why_chart.hidden("none");
+            eclampsia_why_chart();
+
+            education_chart.opacity(0);
+            education_chart.hidden("none")
+            education_chart();
+
+        }
+
+        var handleSection3 = function(){
+            svg.attr("opacity", 1);
+
+            map.hidden(null);
+            map.opacity(1);
+            map();
+
+            world_chart.opacity(0);
+            world_chart.hidden("none")
+            world_chart();
+
+            bar_chart.opacity(0);
+            bar_chart.hidden("none")
+            bar_chart();
+
+            al_why_chart.opacity(0);
+            al_why_chart.hidden("none")
+            al_why_chart();
+
+            treatment_why_chart.opacity(0);
+            treatment_why_chart.hidden("none");
+            treatment_why_chart();
+
+            eclampsia_why_chart.opacity(0);
+            eclampsia_why_chart.hidden("none");
+            eclampsia_why_chart();
+
+            education_chart.opacity(0);
+            education_chart.hidden("none")
+            education_chart();
+        }
+
+        var handleSection4 = function(){
+            svg.attr("opacity", 1);
+
+            al_why_chart.hidden(null);
+            al_why_chart.opacity(1);
+            al_why_chart();
+
+
+            world_chart.opacity(0);
+            world_chart.hidden("none")
+            world_chart();
+
+            bar_chart.opacity(0);
+            bar_chart.hidden("none")
+            bar_chart();
+
+            map.opacity(0);
+            map.hidden("none");
+            map();
+
+            eclampsia_why_chart.opacity(0);
+            eclampsia_why_chart.hidden("none");
+            eclampsia_why_chart();
+
+            treatment_why_chart.opacity(0);
+            treatment_why_chart.hidden("none");
+            treatment_why_chart();
+
+            education_chart.opacity(0);
+            education_chart.hidden("none")
+            education_chart();
+        }
+
+        var handleSection5 = function(){
+            svg.attr("opacity", 1);
+
+            eclampsia_why_chart.hidden(null);
+            eclampsia_why_chart.opacity(1);
+            eclampsia_why_chart();
+
+
+            world_chart.opacity(0);
+            world_chart.hidden("none")
+            world_chart();
+
+            bar_chart.opacity(0);
+            bar_chart.hidden("none")
+            bar_chart();
+
+            map.opacity(0);
+            map.hidden("none");
+            map();
+
+            al_why_chart.opacity(0);
+            al_why_chart.hidden("none");
+            al_why_chart();
+
+
+            treatment_why_chart.opacity(0);
+            treatment_why_chart.hidden("none");
+            treatment_why_chart();
+
+            education_chart.opacity(0);
+            education_chart.hidden("none")
+            education_chart();
+        }
+
+        var handleSection6 = function(){
+            svg.attr("opacity", 1);
+
+            treatment_why_chart.hidden(null);
+            treatment_why_chart.opacity(1);
+            treatment_why_chart();
+
+            world_chart.opacity(0);
+            world_chart.hidden("none")
+            world_chart();
+
+            bar_chart.opacity(0);
+            bar_chart.hidden("none")
+            bar_chart();
+
+            map.opacity(0);
+            map.hidden("none");
+            map();
+
+            al_why_chart.opacity(0);
+            al_why_chart.hidden("none");
+            al_why_chart();
+
+            eclampsia_why_chart.opacity(0);
+            eclampsia_why_chart.hidden("none");
+            eclampsia_why_chart();
+
+
+            education_chart.opacity(0);
+            education_chart.hidden("none")
+            education_chart();
+        }
+
+        var handleSection7 = function(){
+            svg.attr("opacity", 1);
+
+            education_chart.hidden(null)
+            education_chart.opacity(1);
+            education_chart();
+
+            world_chart.opacity(0);
+            world_chart.hidden("none")
+            world_chart();
+
+            bar_chart.opacity(0);
+            bar_chart.hidden("none")
+            bar_chart();
+
+            map.opacity(0);
+            map.hidden("none");
+            map();
+
+            al_why_chart.opacity(0);
+            al_why_chart.hidden("none");
+            al_why_chart();
+
+            eclampsia_why_chart.opacity(0);
+            eclampsia_why_chart.hidden("none");
+            eclampsia_why_chart();
+
+            treatment_why_chart.hidden("none");
+            treatment_why_chart.opacity(0);
+            treatment_why_chart();
+        }
+
+        // set the svg's opacity to 0 since we are just displaying sources here
+        var handleSection8 = function(){
+            svg.attr("opacity", 0);
+        }
+
+         var vis_steps = [
+           handleSection1,
+           handleSection2,
+           handleSection3,
+           handleSection4,
+           handleSection5,
+           handleSection6,
+           handleSection7,
+           handleSection8,
+         ];
+
+         const gs = d3.graphScroll()
+              .container(d3.select("#container"))
+              .graph(d3.select("#graph"))
+              .eventId('sec1_id')
+              .sections(d3.selectAll("#container #sections > section"))
+              .on("active", function(i){
+                   vis_steps[i]()
+              });
+          });
+
+</script>
+<svg id="key1"></svg>
+</body>
+</html>
