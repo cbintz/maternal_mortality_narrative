@@ -11,6 +11,8 @@ Final project for Information Visualization (CS465): Narrative visualization pro
     -  create_map.js: javascript file containing function to create U.S. map colored by infant mortality rate
 
     -  create_why_chart.js: javascript file containing function to create the three horizontal bar charts (allostatic load scores, preeclampsia/eclampsia prevalence, and reports of discriminatory treatment)
+    
+    -  CSCI0465 final project design.pdf: document describing project design and goals
 
     -  fatality_and_education.js: javascript file containing function to create bar chart showing maternal education attainment and infant mortality rate
 
