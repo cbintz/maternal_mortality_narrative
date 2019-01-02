@@ -3,7 +3,7 @@ Final project for Information Visualization (CS465): Narrative visualization pro
 
 -  To launch, either:
     1) Visit http://www.cs.middlebury.edu/~cbintz/infovis/final_project/hw9.html
-    2) Download all files in repository into a directory and CD into the directory. In the terminal, run python -m http.server to run a local server. Next, open Chrome and enter “http://localhost:8000/hw9.html” into the address bar. 
+    2) Download all files in repository into a directory. Then, open a terminal, CD into the directory, and run python -m http.server to run a local server. Next, open Chrome and enter “http://localhost:8000/hw9.html” into the address bar. 
     
     Files in repository: 
     -  apercu-light.ttf: font file for page
