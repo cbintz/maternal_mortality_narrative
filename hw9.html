@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang = "en">
+<html>
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <title>Maternal Mortality</title>
-    <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="graph-scroll.js"></script>
     <script src="line_chart.js"></script>
     <script src="us_bar_chart.js"></script>
@@ -318,13 +318,12 @@
 
 <script>
 
-
     // our data files
-    const worldData = "http://www.cs.middlebury.edu/~cbintz/infovis/final_project/lancet_data.csv"
-    const perRaceUSData = "http://www.cs.middlebury.edu/~cbintz/infovis/final_project/us_per_race_mmr.csv"
-    const perRaceStateData = "http://www.cs.middlebury.edu/~cbintz/infovis/final_project/infant_transpose.csv"
-    const mapData = "http://www.cs.middlebury.edu/~cbintz/infovis/final_project/us-states.json"
-    const mapMetricData = "http://www.cs.middlebury.edu/~cbintz/infovis/final_project/infant_mortality_per_race.csv"
+    const worldData = "lancet_data.csv"
+    const perRaceUSData = "us_per_race_mmr.csv"
+    const perRaceStateData = "infant_transpose.csv"
+    const mapData = "us-states.json"
+    const mapMetricData = "infant_mortality_per_race.csv"
 
     // svg for all charts
     const svg = d3.select("#graph").append("svg")
